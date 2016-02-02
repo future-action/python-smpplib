@@ -17,7 +17,7 @@ class EncodeError(ValueError):
     """Raised if text cannot be represented in gsm 7-bit encoding"""
 
 
-def gsm_encode(plaintext, hex=False):
+def gsm_encode(plaintext: str, hex=False):
     """Replace non-GSM ASCII symbols"""
     res = ""
     for c in plaintext:
@@ -33,7 +33,7 @@ def gsm_encode(plaintext, hex=False):
     return binascii.b2a_hex(res) if hex else res
 
 
-def make_parts(text):
+def make_parts(text: str) -> tuple:
     """Returns tuple(parts, encoding, esm_class)"""
     try:
         text = gsm_encode(text)
@@ -59,10 +59,12 @@ def make_parts(text):
         parts = []
         ipart = 1
         uid = random.randint(0, 255)
+        start_symbols = chr(5) + chr(0) + chr(3)
+        sequence_start = start_symbols.encode('utf-8')
         for start in starts:
-            parts.append(''.join(('\x05\x00\x03', chr(uid),
-                                  chr(len(starts)), chr(ipart),
-                                  encode(text[start:start + partsize]))))
+            sequence_middle = chr(uid).encode('utf-8') + chr(len(starts)).encode('utf-8') + chr(ipart).encode('utf-8')
+            str_string = sequence_start + sequence_middle + encode(text[start:start + partsize])
+            parts.append(str_string)
             ipart += 1
     else:
         parts = (encode(text),)
