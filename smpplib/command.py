@@ -29,6 +29,7 @@ from . import pdu
 from . import exceptions
 from . import consts
 from .ptypes import ostr, flag
+import collections
 
 logger = logging.getLogger('smpplib.command')
 
@@ -65,7 +66,7 @@ def get_optional_name(code):
     """Return optional_params name by given code. If code is unknown, raise
     UnkownCommandError exception"""
 
-    for key, value in consts.OPTIONAL_PARAMS.iteritems():
+    for key, value in consts.OPTIONAL_PARAMS.items():
         if value == code:
             return key
 
@@ -108,14 +109,14 @@ class Command(pdu.PDU):
 
     def _set_vars(self, **kwargs):
         """set attributes accordingly to kwargs"""
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if not hasattr(self, key) or getattr(self, key) is None:
                 setattr(self, key, value)
 
     def generate_params(self):
         """Generate binary data from the object"""
 
-        if hasattr(self, 'prep') and callable(self.prep):
+        if hasattr(self, 'prep') and isinstance(self.prep, collections.Callable):
             self.prep()
 
         body = ''
