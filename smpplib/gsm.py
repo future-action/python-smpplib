@@ -58,7 +58,7 @@ def make_parts(text: str) -> tuple:
 
         parts = []
         ipart = 1
-        uid = random.randint(0, 255)
+        uid = random.randint(0, 127)
         start_symbols = chr(5) + chr(0) + chr(3)
         sequence_start = start_symbols.encode('utf-8')
         for start in starts:
